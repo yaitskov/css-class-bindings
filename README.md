@@ -5,7 +5,7 @@
 Recently I migrated
 [vpn-router](https://github.com/yaitskov/vpn-router) frontend to
 [miso](https://github.com/dmjio/miso) and noticed that DOM functions
-(e.g. `div_`) accept CSS classes as plain strings - so even if CSS
+(e.g. `div_`) accept CSS class names as plain strings - so even if CSS
 style sheets are defined with
 [clay](https://hackage.haskell.org/package/clay), GHC is not able
 to catch a typo in a refered CSS class.

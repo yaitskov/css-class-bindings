@@ -45,7 +45,7 @@ library
   other-modules:
   build-depends:
     , containers   < 1
-    , css-syntax
+    , css-syntax   < 1
     , text         < 3
 
 test-suite test

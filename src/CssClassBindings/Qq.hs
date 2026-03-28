@@ -1,3 +1,4 @@
+-- | Module provides a quasi quoter translating CSS classes to Haskell functions
 module CssClassBindings.Qq (CssClass, css, class_) where
 
 import Data.CSS.Syntax.Tokens ( tokenize, Token(Ident, Delim) )
@@ -39,14 +40,16 @@ class_ = unCssClass
 > }
 
 is expanded as:
-@@
-  {-# INLINE fooBar #-}
-  fooBar :: IsString s => CssClass s
-  fooBar = "foo-bar"
-  {-# INLINE cssAsLiteralText #-}
-  cssAsLiteralText :: IsString s => s
-  cssAsLiteralText = ".foo-bar { padding: 0px; }"
-@@
+
+@
+{-# INLINE fooBar #-}
+fooBar :: IsString s => CssClass s
+fooBar = "foo-bar"
+{-# INLINE cssAsLiteralText #-}
+cssAsLiteralText :: IsString s => s
+cssAsLiteralText = ".foo-bar { padding: 0px; }"
+@
+
 -}
 css :: QuasiQuoter
 css = QuasiQuoter

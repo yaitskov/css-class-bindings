@@ -9,8 +9,8 @@ description:
     
     Recently I migrated <https://github.com/yaitskov/vpn-router vpn-router>
     frontend to <https://github.com/dmjio/miso miso> and noticed that DOM
-    functions (e.g. @div_@) accept CSS classes as plain strings - so even if
-    CSS style sheets are defined with
+    functions (e.g. @div_@) accept CSS class names as plain strings - so
+    even if CSS style sheets are defined with
     <https://hackage.haskell.org/package/clay clay>, GHC is not able to
     catch a typo in a refered CSS class.
     
@@ -106,7 +106,7 @@ library
   other-modules:
   build-depends:
     , containers   < 1
-    , css-syntax
+    , css-syntax   < 1
     , text         < 3
 
 test-suite test
