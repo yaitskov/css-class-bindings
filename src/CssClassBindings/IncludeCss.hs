@@ -1,18 +1,21 @@
 module CssClassBindings.IncludeCss (includeCss) where
 
-import AddDependentFile ( addDependentFile, getPackageRoot, (</>) )
 import CssClassBindings.Escape ( escapeIden )
 import CssClassBindings.Qq (cssToDecs)
-import Data.Text.IO.Utf8 ( readFile )
-import Language.Haskell.TH.Syntax (Q, Dec, runIO, mkName)
-import Prelude (FilePath, (<$>), ($))
-import System.FilePath (takeBaseName)
+import Data.Text.IO.Utf8 qualified as U
+import Language.Haskell.TH.Syntax
+    ( mkName, Q, Dec, runIO, getPackageRoot )
+import Prelude
+import System.Directory (makeAbsolute)
+import System.FilePath (takeBaseName, (</>))
+
+liftIO1 :: (a -> IO b) -> a -> Q b
+liftIO1 f x = runIO (f x)
 
 -- | like css quasi quoter but
 -- css input is exported via constant equal to base file name
 -- instead of cssAsLiteralText.
 includeCss :: FilePath -> Q [Dec]
 includeCss p = do
-  ap <- (</> p) <$> getPackageRoot
-  addDependentFile ap
-  cssToDecs (mkName (escapeIden $ takeBaseName p)) <$> runIO (readFile ap)
+  ap <- getPackageRoot >>= liftIO1 makeAbsolute . (</> p)
+  cssToDecs (mkName (escapeIden $ takeBaseName p)) <$> runIO (U.readFile ap)

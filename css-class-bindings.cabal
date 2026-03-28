@@ -76,8 +76,6 @@ copyright:     Daniil Iaitkov 2026
 category:      System
 build-type:    Simple
 bug-reports:   https://github.com/yaitskov/css-class-bindings/issues
-extra-source-files:
-  assets/style.css
 extra-doc-files:
   changelog.md
 tested-with:
@@ -111,7 +109,7 @@ library
     CssClassBindings.IncludeCss
     CssClassBindings.Qq
   build-depends:
-    , add-dependent-file < 1
+    , directory          < 2
     , containers         < 1
     , css-syntax         < 1
     , filepath           < 2

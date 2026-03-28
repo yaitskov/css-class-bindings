@@ -3,4 +3,4 @@ module CssClassBindings.Test.IncludeCssDefs where
 
 import CssClassBindings (includeCss)
 
-includeCss "assets/style.css"
+includeCss "test/style.css"

@@ -2,10 +2,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/bc16855ba53f3cb6851903a393e7073d1b5911e7";
     flake-utils.url = "github:numtide/flake-utils";
-    adf = {
-      url = "github:yaitskov/add-dependent-file";
-      flake = false;
-    };
     uphack = {
       url = "github:yaitskov/upload-doc-to-hackage";
       flake = false;
@@ -26,13 +22,7 @@
         };
         packageName = "css-class-bindings";
         pkgs = nixpkgs.legacyPackages.${system};
-        overlay = final: prev:
-          with pkgs.haskell.lib.compose; {
-            add-dependent-file = final.callCabal2nix "add-dependent-file" inputs.adf { };
-          };
-
-        haskellPackagesO = pkgs.haskell.packages.${ghcName};
-        haskellPackages = haskellPackagesO.extend(overlay);
+        haskellPackages = pkgs.haskell.packages.${ghcName};
       in {
         packages.default =
             haskellPackages.callCabal2nix packageName (sourceFilter ./.) {};
