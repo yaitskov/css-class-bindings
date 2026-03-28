@@ -17,7 +17,7 @@
           fileset = fileFilter
             (file: file.name == "LICENSE" ||
                    # skip cabal.project.local
-                   builtins.any file.hasExt [ "cabal" "hs" "md" ])
+                   builtins.any file.hasExt [ "cabal" "hs" "md" "css" ])
             root;
         };
         packageName = "css-class-bindings";
