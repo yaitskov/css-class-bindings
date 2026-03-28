@@ -23,7 +23,7 @@ mentioned in the input.
 ``` haskell
 {-# LANGUAGE QuasiQuotes #-}
 module Css where
-import CssClassBindings.Qq ( css )
+import CssClassBindings ( css )
 
 [css|
 .foo-bar {
@@ -34,17 +34,19 @@ import CssClassBindings.Qq ( css )
 
 ``` haskell
 module Main where
+
+import Css (fooBar, cssAsLiteralText)
+import CssClassBindings qualified as C
 import Miso
 import Miso.Html.Element (div_, button_)
 import Miso.Html.Property qualified as P
-import Css qualified as C
 
 class_ :: C.CssClass MisoString -> Attribute action
 class_ = P.class_ . C.class_
 
 app :: App Model Action
 app = (component emptyModel updateModel viewModel)
-  { styles = [ Style C.cssAsLiteralText ]
+  { styles = [ Style cssAsLiteralText ]
   }
 
 viewModel :: Model -> View Model Action

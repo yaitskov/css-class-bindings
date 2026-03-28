@@ -102,8 +102,10 @@ library
   import: base
   hs-source-dirs: src
   exposed-modules:
-    CssClassBindings.Qq
+    CssClassBindings
   other-modules:
+    CssClassBindings.Escape
+    CssClassBindings.Qq
   build-depends:
     , containers   < 1
     , css-syntax   < 1

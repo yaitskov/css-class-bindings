@@ -1,7 +1,7 @@
 {-# LANGUAGE MultilineStrings #-}
 module CssClassBindings.Test.QqAsserts where
 
-import CssClassBindings.Qq (class_)
+import CssClassBindings (class_)
 import CssClassBindings.Test.QqDefs (fooBar, cssAsLiteralText)
 import Prelude
 import Test.Tasty.HUnit ( (@=?) )

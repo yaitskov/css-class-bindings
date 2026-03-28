@@ -1,9 +1,8 @@
 -- | Module provides a quasi quoter translating CSS classes to Haskell functions
-module CssClassBindings.Qq (CssClass, css, class_) where
+module CssClassBindings.Qq (CssClass, cssToDecs, css, class_) where
 
+import CssClassBindings.Escape ( escapeIden )
 import Data.CSS.Syntax.Tokens ( tokenize, Token(Ident, Delim) )
-import Data.Char
-    ( isAlpha, isAlphaNum, isUpper, toLower, toUpper )
 import Data.Set ( insert, Set, toList )
 import Data.String ( IsString )
 import Data.Text ( Text, pack, unpack )
@@ -56,7 +55,7 @@ css = QuasiQuoter
   { quoteExp  = \_ -> fail "quoteExp: not implemented"
   , quotePat  = \_ -> fail "quotePat: not implemented"
   , quoteType = \_ -> fail "quoteType: not implemented"
-  , quoteDec  = pure . cssToDecs
+  , quoteDec  = pure . cssToDecs . pack
   }
 
 {- Sample of token stream
@@ -94,8 +93,8 @@ cssClassConstDec (CssClass cn) =
     n = mkName $ escapeIden ns
     body = NormalB (AppE (ConE 'CssClass) (LitE (StringL ns)))
 
-cssToDecs :: String -> [Dec]
-cssToDecs s = go $ pack s
+cssToDecs :: Text -> [Dec]
+cssToDecs s = go s
   where
     go = (cssAsLiteralTextD s <>) . concatMap cssClassConstDec . toList . collectReferedClasses mempty . tokenize
 
@@ -106,7 +105,7 @@ cssToDecs s = go $ pack s
   cssAsLiteralText = s
 @@
 -}
-cssAsLiteralTextD :: String -> [Dec]
+cssAsLiteralTextD :: Text -> [Dec]
 cssAsLiteralTextD s =
   [ SigD n
     (ForallT
@@ -119,34 +118,4 @@ cssAsLiteralTextD s =
   where
     st = mkName "s"
     n = mkName "cssAsLiteralText"
-    body = NormalB (LitE (StringL s))
-
-escapeIden :: String -> String
-escapeIden s =
-  case escapeIdenChar <$> hyphensToCamelCase s of
-    s'@(fl:ol)
-      | not (isAlpha fl) -> '_' : s'
-      | isUpper fl -> toLower fl : ol
-      | otherwise -> s'
-    [] -> []
-
-escapeIdenChar :: Char -> Char
-escapeIdenChar c
-  | isAlphaNum c || c == '_' = c
-  | otherwise = '_'
-
-hyphensToCamelCase :: String -> String
-hyphensToCamelCase = concatMap ucFirst . splitOn '-'
-
-ucFirst :: String -> String
-ucFirst "" = ""
-ucFirst (h:t) = toUpper h : t
-
-splitOn :: Eq a => a -> [a] -> [[a]]
-splitOn x xs = go xs []
-  where
-    go [] acc = [reverse acc]
-    go (y : ys) acc =
-      if x == y
-      then reverse acc : go ys []
-      else go ys (y : acc)
+    body = NormalB (LitE (StringL $ unpack s))
