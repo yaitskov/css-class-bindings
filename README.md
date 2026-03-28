@@ -2,13 +2,14 @@
 
 ## Motivation
 
-Recently I migrated
+Recently I migrated the
 [vpn-router](https://github.com/yaitskov/vpn-router) frontend to
-[miso](https://github.com/dmjio/miso) and noticed that DOM functions
-(e.g. `div_`) accept CSS class names as plain strings - so even if CSS
-style sheets are defined with
-[clay](https://hackage.haskell.org/package/clay), GHC is not able
-to catch a typo in a refered CSS class.
+[Miso](https://github.com/dmjio/miso), I noticed that DOM functions
+(e.g. `div_`) accept CSS class names as plain strings. This prevents GHC
+from catching typos in referenced names, even if stylesheets are
+correct and defined with
+[clay](https://hackage.haskell.org/package/clay).
+
 
 ## Usage
 

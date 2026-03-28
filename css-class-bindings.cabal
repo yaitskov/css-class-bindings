@@ -7,12 +7,12 @@ description:
     == Motivation
     #motivation#
     
-    Recently I migrated <https://github.com/yaitskov/vpn-router vpn-router>
-    frontend to <https://github.com/dmjio/miso miso> and noticed that DOM
-    functions (e.g. @div_@) accept CSS class names as plain strings - so
-    even if CSS style sheets are defined with
-    <https://hackage.haskell.org/package/clay clay>, GHC is not able to
-    catch a typo in a refered CSS class.
+    Recently I migrated the
+    <https://github.com/yaitskov/vpn-router vpn-router> frontend to
+    <https://github.com/dmjio/miso Miso>, I noticed that DOM functions
+    (e.g. @div_@) accept CSS class names as plain strings. This prevents GHC
+    from catching typos in referenced names, even if stylesheets are correct
+    and defined with <https://hackage.haskell.org/package/clay clay>.
     
     == Usage
     #usage#
