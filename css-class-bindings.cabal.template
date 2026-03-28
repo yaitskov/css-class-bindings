@@ -1,0 +1,68 @@
+cabal-version: 3.0
+name:          css-class-bindings
+version:       0.0.1
+
+synopsis:      generates Haskell bindings for CSS classes
+description:
+homepage:      http://github.com/yaitskov/css-class-bindings
+license:       BSD-3-Clause
+license-file:  LICENSE
+author:        Daniil Iaitskov
+maintainer:    dyaitskov@gmail.com
+copyright:     Daniil Iaitkov 2026
+category:      System
+build-type:    Simple
+bug-reports:   https://github.com/yaitskov/css-class-bindings/issues
+
+extra-doc-files:
+  changelog.md
+tested-with:
+  GHC == 9.12.2
+
+source-repository head
+  type:
+    git
+  location:
+    https://github.com/yaitskov/css-class-bindings.git
+
+common base
+  default-language: GHC2024
+  ghc-options: -Wall
+  default-extensions:
+    DefaultSignatures
+    NoImplicitPrelude
+    OverloadedStrings
+    TemplateHaskell
+  build-depends:
+    , base >=4.7 && < 5
+    , template-haskell  < 3
+
+library
+  import: base
+  hs-source-dirs: src
+  exposed-modules:
+    CssClassBindings.Qq
+  other-modules:
+  build-depends:
+    , containers   < 1
+    , css-syntax
+    , text         < 3
+
+test-suite test
+  import: base
+  type: exitcode-stdio-1.0
+  main-is: Driver.hs
+  other-modules:
+    CssClassBindings.Test.QqDefs
+    CssClassBindings.Test.QqAsserts
+    Discovery
+  hs-source-dirs:
+    test
+  ghc-options: -Wall -rtsopts -threaded -main-is Driver
+  build-depends:
+    , css-class-bindings
+    , QuickCheck
+    , tasty
+    , tasty-discover
+    , tasty-hunit
+    , tasty-quickcheck
