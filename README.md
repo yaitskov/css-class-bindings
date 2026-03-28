@@ -17,7 +17,7 @@ The library leverages the power of TH to parse CSS snippets from quasi
 quotes or style files and to define Haskell constants for every class
 mentioned in the input.
 
-### Input
+### Quasi-quote input
 
 
 ``` haskell
@@ -59,6 +59,22 @@ not depend on miso and it can be used in other setups.
 ``` haskell
 fooBar :: IsString s => CssClass s
 cssAsLiteralText :: IsString s => s
+```
+
+### File input
+``` haskell
+{-# LANGUAGE TemplateHaskell #-}
+module Css where
+import CssClassBindings ( includeCss )
+
+includeCss "assets/style.css"
+```
+
+``` haskell
+module Main where
+
+import Css (fooBar, style)
+-- ...
 ```
 
 ## Development environment

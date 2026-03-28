@@ -21,8 +21,8 @@ description:
     quotes or style files and to define Haskell constants for every class
     mentioned in the input.
     
-    === Input
-    #input#
+    === Quasi-quote input
+    #quasi-quote-input#
     
     > {-# LANGUAGE QuasiQuotes #-}
     > module Css where
@@ -58,6 +58,20 @@ description:
     
     > fooBar :: IsString s => CssClass s
     > cssAsLiteralText :: IsString s => s
+    
+    === File input
+    #file-input#
+    
+    > {-# LANGUAGE TemplateHaskell #-}
+    > module Css where
+    > import CssClassBindings ( includeCss )
+    >
+    > includeCss "assets/style.css"
+    
+    > module Main where
+    >
+    > import Css (fooBar, style)
+    > -- ...
     
     == Development environment
     #development-environment#
