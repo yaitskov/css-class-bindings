@@ -9,6 +9,7 @@ import Data.Text ( Text, pack, unpack )
 import Language.Haskell.TH.Quote ( QuasiQuoter(..) )
 import Language.Haskell.TH.Syntax
     ( mkName,
+      Name,
       Exp(LitE, AppE, ConE),
       Clause(Clause),
       Type(VarT, ForallT, AppT, ConT),
@@ -55,8 +56,10 @@ css = QuasiQuoter
   { quoteExp  = \_ -> fail "quoteExp: not implemented"
   , quotePat  = \_ -> fail "quotePat: not implemented"
   , quoteType = \_ -> fail "quoteType: not implemented"
-  , quoteDec  = pure . cssToDecs . pack
+  , quoteDec  = pure . cssToDecs n . pack
   }
+  where
+    n = mkName "cssAsLiteralText"
 
 {- Sample of token stream
 Delim '.',Ident "skeleton-block",Colon,Function "not",Colon,Ident "last-child",RightParen
@@ -93,10 +96,10 @@ cssClassConstDec (CssClass cn) =
     n = mkName $ escapeIden ns
     body = NormalB (AppE (ConE 'CssClass) (LitE (StringL ns)))
 
-cssToDecs :: Text -> [Dec]
-cssToDecs s = go s
+cssToDecs :: Name -> Text -> [Dec]
+cssToDecs inputExportName s = go s
   where
-    go = (cssAsLiteralTextD s <>) . concatMap cssClassConstDec . toList . collectReferedClasses mempty . tokenize
+    go = (cssAsLiteralTextD inputExportName s <>) . concatMap cssClassConstDec . toList . collectReferedClasses mempty . tokenize
 
 {- | generate definition like:
 @@
@@ -105,8 +108,8 @@ cssToDecs s = go s
   cssAsLiteralText = s
 @@
 -}
-cssAsLiteralTextD :: Text -> [Dec]
-cssAsLiteralTextD s =
+cssAsLiteralTextD :: Name -> Text -> [Dec]
+cssAsLiteralTextD n s =
   [ SigD n
     (ForallT
       [PlainTV st InferredSpec]
@@ -117,5 +120,4 @@ cssAsLiteralTextD s =
   ]
   where
     st = mkName "s"
-    n = mkName "cssAsLiteralText"
     body = NormalB (LitE (StringL $ unpack s))

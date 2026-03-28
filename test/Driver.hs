@@ -2,7 +2,7 @@ module Driver where
 
 import qualified Discovery
 import Prelude
-import Test.Tasty
+import Test.Tasty ( defaultMain, testGroup, TestTree )
 
 main :: IO ()
 main = defaultMain =<< testTree
