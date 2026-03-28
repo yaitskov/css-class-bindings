@@ -1,3 +1,4 @@
 /dist-newstyle/
 /.haddock-ref
 /result
+/.direnv/
