@@ -1,13 +1,16 @@
 {-# LANGUAGE MultilineStrings #-}
 module CssClassBindings.Test.IncludeCssAsserts where
 
-import CssClassBindings (class_)
-import CssClassBindings.Test.IncludeCssDefs (fooBar, style)
+import CssClassBindings (class_, id_)
+import CssClassBindings.Test.IncludeCssDefs (fooBar, FooBar(..), style)
 import Prelude
 import Test.Tasty.HUnit ( (@=?) )
 
 unit_camelCaseLiteral :: IO ()
 unit_camelCaseLiteral = ("foo-bar" :: String) @=? class_ fooBar
+
+unit_camelCaseLiteral_Id :: IO ()
+unit_camelCaseLiteral_Id = ("foo-bar" :: String) @=? id_ FooBar
 
 unit_exportCssInputAsIs :: IO ()
 unit_exportCssInputAsIs = css @=? style
@@ -15,6 +18,10 @@ unit_exportCssInputAsIs = css @=? style
     css :: String
     css = """
       .foo-bar {
+        color: #1212ff;
+      }
+
+      #foo-bar {
         color: #1212ff;
       }
     """ <> "\n"

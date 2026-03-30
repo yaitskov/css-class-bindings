@@ -1,6 +1,6 @@
 cabal-version: 3.0
 name:          css-class-bindings
-version:       0.0.2
+version:       0.0.3
 
 synopsis:      generates Haskell bindings for CSS classes
 description:
@@ -10,7 +10,7 @@ license-file:  LICENSE
 author:        Daniil Iaitskov
 maintainer:    dyaitskov@gmail.com
 copyright:     Daniil Iaitkov 2026
-category:      System
+category:      Miso, HTML, CSS, Template Haskell
 build-type:    Simple
 bug-reports:   https://github.com/yaitskov/css-class-bindings/issues
 extra-doc-files:

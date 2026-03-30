@@ -1,6 +1,6 @@
 module CssClassBindings.IncludeCss (includeCss) where
 
-import CssClassBindings.Escape ( escapeIden )
+import CssClassBindings.Escape ( escapeValIden )
 import CssClassBindings.Qq (cssToDecs)
 import Data.Text.IO.Utf8 qualified as U
 import Language.Haskell.TH.Syntax
@@ -18,4 +18,4 @@ liftIO1 f x = runIO (f x)
 includeCss :: FilePath -> Q [Dec]
 includeCss p = do
   ap <- getPackageRoot >>= liftIO1 makeAbsolute . (</> p)
-  cssToDecs (mkName (escapeIden $ takeBaseName p)) <$> runIO (U.readFile ap)
+  cssToDecs (mkName (escapeValIden $ takeBaseName p)) <$> runIO (U.readFile ap)

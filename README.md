@@ -29,13 +29,16 @@ import CssClassBindings ( css )
 .foo-bar {
   color: #fc2c2c;
 }
+#foo-bar {
+  color: #fc2c2c;
+}
 |]
 ```
 
 ``` haskell
 module Main where
 
-import Css (fooBar, cssAsLiteralText)
+import Css (fooBar, FooBar(..), cssAsLiteralText)
 import CssClassBindings qualified as C
 import Miso
 import Miso.Html.Element (div_, button_)
@@ -44,13 +47,23 @@ import Miso.Html.Property qualified as P
 class_ :: C.CssClass MisoString -> Attribute action
 class_ = P.class_ . C.class_
 
+key_ :: C.CssIdentifier i => i -> Attribute action
+key_ = P.key_ . C.id_
+
 app :: App Model Action
 app = (component emptyModel updateModel viewModel)
   { styles = [ Style cssAsLiteralText ]
   }
 
 viewModel :: Model -> View Model Action
-viewModel m = div_ [] [ button_ [ class_ fooBar ] [ "Submit" ] ]
+viewModel m =
+  div_ []
+    [ button_
+      [ key_ FooBar
+      , class_ fooBar
+      ]
+      [ "Submit" ]
+    ]
 ```
 
 The library has been created to improve a miso-based app, but it does
@@ -73,7 +86,7 @@ includeCss "assets/style.css"
 ``` haskell
 module Main where
 
-import Css (fooBar, style)
+import Css (fooBar, FooBar(..), style)
 -- ...
 ```
 

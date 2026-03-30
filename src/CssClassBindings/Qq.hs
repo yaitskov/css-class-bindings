@@ -1,29 +1,25 @@
 -- | Module provides a quasi quoter translating CSS classes to Haskell functions
-module CssClassBindings.Qq (CssClass, cssToDecs, css, class_) where
+module CssClassBindings.Qq
+  ( CssIdentifier (id_)
+  , CssClass
+  , cssToDecs
+  , css
+  , class_
+  ) where
 
-import CssClassBindings.Escape ( escapeIden )
-import Data.CSS.Syntax.Tokens ( tokenize, Token(Ident, Delim) )
+import CssClassBindings.Escape ( escapeValIden, escapeTypeIden )
+import Data.CSS.Syntax.Tokens
+    ( Token(Hash, Delim, Ident), tokenize, HashFlag(HId) )
 import Data.Set ( insert, Set, toList )
 import Data.String ( IsString )
 import Data.Text ( Text, pack, unpack )
 import Language.Haskell.TH.Quote ( QuasiQuoter(..) )
 import Language.Haskell.TH.Syntax
-    ( mkName,
-      Name,
-      Exp(LitE, AppE, ConE),
-      Clause(Clause),
-      Type(VarT, ForallT, AppT, ConT),
-      Dec(PragmaD, SigD, FunD),
-      Body(NormalB),
-      Inline(Inline),
-      Lit(StringL),
-      Phases(AllPhases),
-      Pragma(InlineP),
-      RuleMatch(FunLike),
-      Specificity(InferredSpec),
-      TyVarBndr(PlainTV) )
+
 
 import Prelude
+
+data CssName = CssClassName Text | CssId Text deriving (Show, Eq, Ord)
 
 newtype CssClass s = CssClass { unCssClass :: s } deriving (Show, Eq, Ord)
 
@@ -33,15 +29,28 @@ instance (Semigroup s, IsString s) => Semigroup (CssClass s) where
 class_ :: IsString s => CssClass s -> s
 class_ = unCssClass
 
+class CssIdentifier a where
+  id_ :: IsString s => a -> s
+
+
 {- | quasi quoter accepts CSS and generates definition for classes
 
 > .foo-bar {
 >   padding: 0px;
 > }
+> #foo-bar {
+>   padding: 0px;
+> }
+
 
 is expanded as:
 
 @
+data FooBar = FooBar
+instance CssIdentifier FooBar where
+  id_ _ = "foo-bar"
+{-# INLINE id_ #-}
+
 {-# INLINE fooBar #-}
 fooBar :: IsString s => CssClass s
 fooBar = "foo-bar"
@@ -64,10 +73,12 @@ css = QuasiQuoter
 {- Sample of token stream
 Delim '.',Ident "skeleton-block",Colon,Function "not",Colon,Ident "last-child",RightParen
 -}
-collectReferedClasses :: Set (CssClass Text) -> [Token] -> Set (CssClass Text)
+collectReferedClasses :: Set CssName -> [Token] -> Set CssName
 collectReferedClasses s = \case
   Delim '.' : Ident cn : t ->
-    collectReferedClasses (insert (CssClass cn) s) t
+    collectReferedClasses (insert (CssClassName cn) s) t
+  Hash HId i : t ->
+    collectReferedClasses (insert (CssId i) s) t
   _ : t -> collectReferedClasses s t
   [] -> s
 
@@ -80,26 +91,45 @@ collectReferedClasses s = \case
 @@
 
 -}
-cssClassConstDec :: CssClass Text -> [Dec]
-cssClassConstDec (CssClass cn) =
-  [ PragmaD (InlineP n Inline FunLike AllPhases)
-  , SigD n
-    (ForallT
-      [PlainTV st InferredSpec]
-      [AppT (ConT ''IsString) (VarT st)]
-      (AppT (ConT ''CssClass) (VarT st)))
-  , FunD n [ Clause [] body [] ]
-  ]
+cssClassConstDec :: CssName -> [Dec]
+cssClassConstDec = \case
+  CssClassName cn -> className cn
+  CssId i -> cssId i
   where
     st = mkName "s"
-    ns = unpack cn
-    n = mkName $ escapeIden ns
-    body = NormalB (AppE (ConE 'CssClass) (LitE (StringL ns)))
+    cssId i =
+      [ DataD [] n [] Nothing
+        [NormalC n []]
+        [DerivClause Nothing [ConT ''Show, ConT ''Eq]]
+      , InstanceD Nothing [] (AppT (ConT ''CssIdentifier) (ConT n))
+        [ FunD (mkName "id_")
+          [ Clause [WildP] (NormalB . LitE $ StringL ns) [] ]
+        ]
+      ]
+      where
+        ns = unpack i
+        n = mkName $ escapeTypeIden ns
+
+    className cn =
+      [ PragmaD (InlineP n Inline FunLike AllPhases)
+      , SigD n
+        (ForallT
+          [PlainTV st InferredSpec]
+          [AppT (ConT ''IsString) (VarT st)]
+          (AppT (ConT ''CssClass) (VarT st)))
+      , FunD n [ Clause [] body [] ]
+      ]
+      where
+        ns = unpack cn
+        n = mkName $ escapeValIden ns
+        body = NormalB (AppE (ConE 'CssClass) (LitE (StringL ns)))
+
 
 cssToDecs :: Name -> Text -> [Dec]
 cssToDecs inputExportName s = go s
   where
-    go = (cssAsLiteralTextD inputExportName s <>) . concatMap cssClassConstDec . toList . collectReferedClasses mempty . tokenize
+    go = (cssAsLiteralTextD inputExportName s <>) . concatMap cssClassConstDec .
+      toList . collectReferedClasses mempty . tokenize
 
 {- | generate definition like:
 @@

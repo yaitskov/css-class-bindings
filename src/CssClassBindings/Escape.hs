@@ -1,17 +1,31 @@
 module CssClassBindings.Escape where
 
 import Data.Char
-    ( isAlpha, isAlphaNum, isUpper, toLower, toUpper )
+    ( isAlpha,
+      isAlphaNum,
+      isLowerCase,
+      isUpper,
+      toLower,
+      toUpper )
 import Prelude
 
-escapeIden :: String -> String
-escapeIden s =
+escapeValIden :: String -> String
+escapeValIden s =
   case escapeIdenChar <$> hyphensToCamelCase s of
     s'@(fl:ol)
       | not (isAlpha fl) -> '_' : s'
       | isUpper fl -> toLower fl : ol
       | otherwise -> s'
     [] -> []
+
+escapeTypeIden :: String -> String
+escapeTypeIden s =
+  case escapeValIden s of
+    es@(fl : ol)
+      | isLowerCase fl -> toUpper fl : ol
+      | otherwise -> es
+    [] -> []
+
 
 escapeIdenChar :: Char -> Char
 escapeIdenChar c
