@@ -103,6 +103,8 @@ copyright:     Daniil Iaitkov 2026
 category:      Miso, HTML, CSS, Template Haskell
 build-type:    Simple
 bug-reports:   https://github.com/yaitskov/css-class-bindings/issues
+extra-source-files:
+  test/style.css
 extra-doc-files:
   changelog.md
 tested-with:
@@ -136,7 +138,7 @@ library
     CssClassBindings.IncludeCss
     CssClassBindings.Qq
   build-depends:
-    , directory          < 2
+    , add-dependent-file >= 0.0.2 && < 1
     , containers         < 1
     , css-syntax         < 1
     , filepath           < 2

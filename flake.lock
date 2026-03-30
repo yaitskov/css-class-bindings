@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "adf": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774857134,
+        "narHash": "sha256-KmyNxE6oNYitoIBYlYhbxnUtSxqQqdzZkMLiBNkCbdU=",
+        "owner": "yaitskov",
+        "repo": "add-dependent-file",
+        "rev": "d49bb4f405237cf0f3d4bf1168b62aa73ffab5b2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yaitskov",
+        "repo": "add-dependent-file",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -36,6 +52,7 @@
     },
     "root": {
       "inputs": {
+        "adf": "adf",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
         "uphack": "uphack"
