@@ -22,6 +22,6 @@ unit_exportCssInputAsIs = css @=? style
       }
 
       #foo-bar {
-        color: #1212ff;
+        color: #f212ff;
       }
     """ <> "\n"

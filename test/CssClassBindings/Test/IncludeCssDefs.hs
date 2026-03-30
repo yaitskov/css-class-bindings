@@ -4,3 +4,5 @@ module CssClassBindings.Test.IncludeCssDefs where
 import CssClassBindings ( includeCss, CssIdentifier(id_) )
 
 includeCss "test/style.css"
+
+data F212ff

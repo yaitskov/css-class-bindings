@@ -8,5 +8,7 @@ import CssClassBindings ( css, CssIdentifier(id_) )
 }
 
 #foo-bar {
-  color: #1212ff;
+  color: #f212ff;
 }|]
+
+data F212ff

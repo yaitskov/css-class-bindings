@@ -9,7 +9,7 @@ module CssClassBindings.Qq
 
 import CssClassBindings.Escape ( escapeValIden, escapeTypeIden )
 import Data.CSS.Syntax.Tokens
-    ( Token(Hash, Delim, Ident), tokenize, HashFlag(HId) )
+    ( Token(Hash, Delim, Ident, Whitespace, LeftCurlyBracket), tokenize, HashFlag(HId) )
 import Data.Set ( insert, Set, toList )
 import Data.String ( IsString )
 import Data.Text ( Text, pack, unpack )
@@ -77,11 +77,12 @@ collectReferedClasses :: Set CssName -> [Token] -> Set CssName
 collectReferedClasses s = \case
   Delim '.' : Ident cn : t ->
     collectReferedClasses (insert (CssClassName cn) s) t
-  Hash HId i : t ->
-    collectReferedClasses (insert (CssId i) s) t
+  Hash HId i : Whitespace : LeftCurlyBracket : t -> iden i t
+  Hash HId i : LeftCurlyBracket : t -> iden i t
   _ : t -> collectReferedClasses s t
   [] -> s
-
+  where
+    iden i = collectReferedClasses (insert (CssId i) s)
 {- | generate definition like:
 
 @@
