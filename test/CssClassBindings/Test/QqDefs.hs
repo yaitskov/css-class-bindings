@@ -7,6 +7,22 @@ import CssClassBindings ( css, CssIdentifier(id_) )
   color: #1212ff;
 }
 
+*:not(#funargid) {
+  color: #aaa;
+}
+
+*:not(#funargidclass.yyy) {
+  color: #aaa;
+}
+
+#idseq, .xxx {
+  color: #bbb;
+}
+
+#idseqspace , .xxx {
+  color: #ccc;
+}
+
 #foo-bar {
   color: #f212ff;
 }|]

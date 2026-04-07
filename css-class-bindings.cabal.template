@@ -1,6 +1,6 @@
 cabal-version: 3.0
 name:          css-class-bindings
-version:       0.0.3
+version:       0.0.4
 
 synopsis:      generates Haskell bindings for CSS classes
 description:

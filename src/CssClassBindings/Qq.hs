@@ -9,13 +9,33 @@ module CssClassBindings.Qq
 
 import CssClassBindings.Escape ( escapeValIden, escapeTypeIden )
 import Data.CSS.Syntax.Tokens
-    ( Token(Hash, Delim, Ident, Whitespace, LeftCurlyBracket), tokenize, HashFlag(HId) )
+    ( Token(Comma, Ident, LeftCurlyBracket, Colon, Function,
+            RightParen, Delim, Hash, Whitespace),
+      HashFlag(HId),
+      tokenize )
+
 import Data.Set ( insert, Set, toList )
 import Data.String ( IsString )
 import Data.Text ( Text, pack, unpack )
 import Language.Haskell.TH.Quote ( QuasiQuoter(..) )
 import Language.Haskell.TH.Syntax
-
+    ( mkName,
+      Exp(LitE, AppE, ConE),
+      Clause(Clause),
+      Pat(WildP),
+      Con(NormalC),
+      Type(VarT, ForallT, AppT, ConT),
+      Dec(PragmaD, DataD, InstanceD, SigD, FunD),
+      Name,
+      DerivClause(DerivClause),
+      TyVarBndr(PlainTV),
+      Body(NormalB),
+      Lit(StringL),
+      Pragma(InlineP),
+      Inline(Inline),
+      RuleMatch(FunLike),
+      Phases(AllPhases),
+      Specificity(InferredSpec) )
 
 import Prelude
 
@@ -75,10 +95,22 @@ Delim '.',Ident "skeleton-block",Colon,Function "not",Colon,Ident "last-child",R
 -}
 collectReferedClasses :: Set CssName -> [Token] -> Set CssName
 collectReferedClasses s = \case
+  -- class
   Delim '.' : Ident cn : t ->
     collectReferedClasses (insert (CssClassName cn) s) t
-  Hash HId i : Whitespace : LeftCurlyBracket : t -> iden i t
+  -- hash
   Hash HId i : LeftCurlyBracket : t -> iden i t
+  Hash HId i : Whitespace : LeftCurlyBracket : t -> iden i t
+
+  Colon : Function _ : Hash HId i : RightParen : t -> iden i t
+  Colon : Function _ : Hash HId i : Whitespace : RightParen : t -> iden i t
+
+  Hash HId i : Delim '.' : t -> iden i t
+  Hash HId i : Whitespace : Delim '.' : t -> iden i t
+
+  Hash HId i : Comma : t -> iden i t
+  Hash HId i : Whitespace : Comma : t -> iden i t
+
   _ : t -> collectReferedClasses s t
   [] -> s
   where
